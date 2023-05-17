@@ -2,7 +2,7 @@ import java.util.*;
 
 public class Maze
 {
-	// Deklarasi nilai
+    // Deklarasi nilai
     public static final int RIGHT = 0;
     public static final int DOWN = 1;
     public static final int LEFT = 2;
@@ -13,7 +13,7 @@ public class Maze
     private int width;
     private Cell[][] grid; // Grid maze
     private Position player; // Posisi pemain
-    private boolean win;// Win state
+    private boolean win; // Win state
     private Stack<Position> solution;
 
     public Maze(int size)
@@ -23,7 +23,7 @@ public class Maze
         generateMaze();
     }
 
-    public void prepareMaze()//Initialize the maze grid | O(n^2)
+    public void prepareMaze()
     {
         solution=new Stack<Position>();
         win=false;
@@ -34,38 +34,38 @@ public class Maze
                 grid[i][j]=new Cell();
     }
     
-    public void generateMaze()//generate a random maze - Using depth-first search | O(n^2)
+    // Generate random maze menggunakan Depth First Search (DFS)
+    public void generateMaze()
     {
         prepareMaze();
         Stack<Position> pathStack=new Stack<Position>();
         Position current;
         boolean checked [][]=new boolean[height][width];
 
-
         for(boolean[] row:checked)
-            Arrays.fill(row,false);//initialize as not checked
+            Arrays.fill(row,false);
 
-        Position p=new Position(0,0);//Starting Position 0,0
-        checked[p.getY()][p.getX()]=true;//mark the starting cell as visited
-        pathStack.push(p);//push current Position to the stack
+        Position p=new Position(0,0); //Starting Position 0,0
+        checked[p.getY()][p.getX()]=true; //mark the starting cell as visited
+        pathStack.push(p); //push current Position to the stack
 
         while(!pathStack.empty())
         {
-            current=pathStack.pop();//Make the top of the stack our "current" cell
+            current=pathStack.pop(); //Make the top of the stack our "current" cell
 
-            if(anyNonCheckedNeigh(checked,current))//if current has any unchecked neighbors
+            if(anyNonCheckedNeigh(checked,current)) //if current has any unchecked neighbors
             {
                 pathStack.push(current);
-                int randNeigh[]=initNShuffleNeigh();//Init the array with the numbers 0-3 in a random order
+                int randNeigh[]=initNShuffleNeigh(); //Init the array with the numbers 0-3 in a random order
 
-                for(int side :randNeigh)//check any neighbor
+                for(int side :randNeigh) //check any neighbor
                 {
                     int indexY=current.getY()+neigh[side][0];
                     int indexX=current.getX()+neigh[side][1];
                     boolean inBounds = ((indexX >= 0) && (indexX < grid.length))&&((indexY >= 0) && (indexY < grid[0].length));//True if the random neighbor is inside the grid's bounds
-                    if(inBounds&&!isCheckedNeighbor(checked,current,side))//if neighbor isn't checked and is in bounds
+                    if(inBounds&&!isCheckedNeighbor(checked,current,side)) //if neighbor isn't checked and is in bounds
                     {
-                        p=new Position(indexX,indexY);//recycle usage of p to push the new chosen cell to the stack
+                        p=new Position(indexX,indexY); //recycle usage of p to push the new chosen cell to the stack
                         breakWall(current,side);
                         checked[indexY][indexX]=true;
                         pathStack.push(p);
@@ -76,35 +76,34 @@ public class Maze
         }
     }
 
-    public void solveMaze()//reaches the end of the maze and puts the solution path in the solution stack of the maze | O(n^2)
+    public void solveMaze() //reaches the end of the maze and puts the solution path in the solution stack of the maze | O(n^2)
     {
-      //  Stack<Position> path=new Stack<Position>();
+        //  Stack<Position> path=new Stack<Position>();
         boolean checked [][]=new boolean[height][width];
 
         for(boolean[] row:checked)
-            Arrays.fill(row,false);//initialize as not checked
+            Arrays.fill(row,false); //initialize as not checked
 
-       // path.push(new Position(0,0));//starting Position
-        solution.push(new Position(0,0));//starting Position
+        // path.push(new Position(0,0)); //starting Position
+        solution.push(new Position(0,0)); //starting Position
 
         solveMaze(checked);
 
-        settleGame();//signal that the game has ended
+        settleGame(); //signal that the game has ended
         //return path;
     }
 
-    private  boolean solveMaze(boolean[][] checked)//recursive method that searches the end of the maze - Using recursive backtracker | O(n^2)
+    private  boolean solveMaze(boolean[][] checked) //recursive method that searches the end of the maze - Using recursive backtracker | O(n^2)
     {
         Position current=solution.peek();
         boolean isRightWay;
         checked[current.getY()][current.getX()]=true;
 
-
-        if(current.getY()==height-1&&current.getX()==width-1)//If current reached the end Position
+        if(current.getY()==height-1&&current.getX()==width-1) //If current reached the end Position
         {
             return true;
         }
-        if(anyNonCheckedNeigh(checked,current))//if current has any unchecked neighbors
+        if(anyNonCheckedNeigh(checked,current)) //if current has any unchecked neighbors
         {
             for(int i=0;i<4;i++)
             {
