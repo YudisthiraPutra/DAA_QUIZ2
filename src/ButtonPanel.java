@@ -69,7 +69,7 @@ public class ButtonPanel extends JPanel
         return textField;
     }
 
-    // Melakukan setAction listener
+    // Do setAction listener
     public void setAction(ButtonAction action)
     {
         newMazeBtn.addActionListener(action);
