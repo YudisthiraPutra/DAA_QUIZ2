@@ -42,30 +42,32 @@ public class Maze
         Position current;
         boolean checked [][]=new boolean[height][width];
 
-        for(boolean[] row:checked)
-            Arrays.fill(row,false);
+        for(boolean[] row:checked) Arrays.fill(row,false);
 
-        Position p=new Position(0,0); //Starting Position 0,0
-        checked[p.getY()][p.getX()]=true; //mark the starting cell as visited
-        pathStack.push(p); //push current Position to the stack
+        Position p=new Position(0,0); // Titik awal diinisialisasi (0,0)
+        checked[p.getY()][p.getX()]=true;
+        pathStack.push(p); // Push posisi terbaru ke dalam stack
 
         while(!pathStack.empty())
         {
-            current=pathStack.pop(); //Make the top of the stack our "current" cell
+            current=pathStack.pop();
 
-            if(anyNonCheckedNeigh(checked,current)) //if current has any unchecked neighbors
+            // Jika current memiliki neighbors yang belum dicek
+            if(anyNonCheckedNeigh(checked,current))
             {
                 pathStack.push(current);
-                int randNeigh[]=initNShuffleNeigh(); //Init the array with the numbers 0-3 in a random order
+                int randNeigh[]=initNShuffleNeigh();
 
-                for(int side :randNeigh) //check any neighbor
+                // Mengecek seluruh neighbors
+                for(int side :randNeigh)
                 {
                     int indexY=current.getY()+neigh[side][0];
                     int indexX=current.getX()+neigh[side][1];
-                    boolean inBounds = ((indexX >= 0) && (indexX < grid.length))&&((indexY >= 0) && (indexY < grid[0].length));//True if the random neighbor is inside the grid's bounds
-                    if(inBounds&&!isCheckedNeighbor(checked,current,side)) //if neighbor isn't checked and is in bounds
+                    boolean inBounds = ((indexX >= 0) && (indexX < grid.length))&&((indexY >= 0) && (indexY < grid[0].length));
+                    // Jika neighbor belum dicek
+                    if(inBounds&&!isCheckedNeighbor(checked,current,side))
                     {
-                        p=new Position(indexX,indexY); //recycle usage of p to push the new chosen cell to the stack
+                        p=new Position(indexX,indexY);
                         breakWall(current,side);
                         checked[indexY][indexX]=true;
                         pathStack.push(p);
@@ -76,66 +78,59 @@ public class Maze
         }
     }
 
-    public void solveMaze() //reaches the end of the maze and puts the solution path in the solution stack of the maze | O(n^2)
+    public void solveMaze()
     {
-        //  Stack<Position> path=new Stack<Position>();
         boolean checked [][]=new boolean[height][width];
-
-        for(boolean[] row:checked)
-            Arrays.fill(row,false); //initialize as not checked
-
-        // path.push(new Position(0,0)); //starting Position
-        solution.push(new Position(0,0)); //starting Position
-
+        for(boolean[] row:checked) Arrays.fill(row,false);
+        solution.push(new Position(0,0));
         solveMaze(checked);
-
-        settleGame(); //signal that the game has ended
-        //return path;
+        settleGame(); 
     }
 
-    private  boolean solveMaze(boolean[][] checked) //recursive method that searches the end of the maze - Using recursive backtracker | O(n^2)
+    // Menggunakan method recursive yang mencari ujung dari maze (Recursive Bactracker)
+    private  boolean solveMaze(boolean[][] checked)
     {
         Position current=solution.peek();
         boolean isRightWay;
         checked[current.getY()][current.getX()]=true;
 
-        if(current.getY()==height-1&&current.getX()==width-1) //If current reached the end Position
+        // Jika current position sudah mencapai ujung
+        if(current.getY()==height-1&&current.getX()==width-1)
         {
             return true;
         }
-        if(anyNonCheckedNeigh(checked,current)) //if current has any unchecked neighbors
+        // Jika current position memiliki neighbors yang belum dicek 
+        if(anyNonCheckedNeigh(checked,current))
         {
             for(int i=0;i<4;i++)
             {
                 int indexY=current.getY()+neigh[i][0];
                 int indexX=current.getX()+neigh[i][1];
-              //  boolean inBounds = ((indexY >= 0) && (indexY < grid.length))&&((indexX >= 0) && (indexX < grid[0].length));//True if the random neighbor is inside the grid's bounds
                 boolean inBounds = ((indexX >= 0) && (indexX < grid.length))&&((indexY >= 0) && (indexY < grid[0].length));
-                if(inBounds)//If neighbor is in bounds of maze grid
+                if(inBounds)
                 {
-                    if (!grid[current.getY()][current.getX()].getWall(i) && !isCheckedNeighbor(checked, current, i))//If the Neighbor isn't checked and there isn't a wall separating the cells
+                    // Jika neighbor belum dicek dan tidak ada dinding pemisah dalam cell
+                    if (!grid[current.getY()][current.getX()].getWall(i) && !isCheckedNeighbor(checked, current, i))
                     {
                         solution.push(new Position(indexX, indexY));
-                        isRightWay = solveMaze(checked);//recursion call to check if neighbor's method call reached the end of the maze
-
-                        if (isRightWay)//if neighbor reached the end of the maze return true
-                            return true;
+                        isRightWay = solveMaze(checked);
+                        if (isRightWay) return true;
                     }
                 }
             }
         }
-        solution.pop();//if couldn't find a neighbor that reached the end of the maze, pop the stack and return false
+        // Jika tidak menemukan neighbor yang mencapai ujung maze, pop stack dan return false
+        solution.pop();
         return false;
     }
     
-    private boolean isCheckedNeighbor(boolean checked [][], Position current, int side)//checks if a neighbor of a give cell is checked, returns true if checked,else false. 0=Right,1=Down,2=Left,3=Up - Not checking if neighbor exists | O(1).
+    private boolean isCheckedNeighbor(boolean checked [][], Position current, int side)
     {
         return checked[current.getY()+neigh[side][0]][current.getX()+neigh[side][1]];
     }
 
-    private boolean anyNonCheckedNeigh(boolean checked [][],Position current)//checks if the given cell has any unchecked neighbors(at least 1) | O(1)
+    private boolean anyNonCheckedNeigh(boolean checked [][],Position current)
     {
-
         for (int i=0;i<4;i++)
         {
             int indexY=current.getY()+neigh[i][0];
@@ -149,17 +144,17 @@ public class Maze
         }
         return false;
     }
-
-    private void breakWall(Position p,int side)//"Break" the wall between the given cell and a chosen neighbor. 0=Right,1=Down,2=Left,3=Up - Not checking if neighbor exists | O(1)
+    // 0=Right, 1=Down, 2=Left, 3=Up
+    private void breakWall(Position p,int side)
     {
         int currentY= p.getY(),currentX= p.getX(),nextX,nextY;
         grid[currentY][currentX].setWall(false,side);
         nextY=p.getY()+neigh[side][0];
         nextX= p.getX()+neigh[side][1];
-        grid[nextY][nextX].setWall(false,(side+2)%4);// The evaluation of "(side+2)%4" gives me the wall of the neighbor which is facing to the current cell's direction
+        grid[nextY][nextX].setWall(false,(side+2)%4);
     }
 
-    private int[] initNShuffleNeigh()//returns an array of all neighbors(0-3) in a random order - using "Fisher–Yates shuffle" - O(1)
+    private int[] initNShuffleNeigh()
     {
         Random rng=new Random();
         int arr[]={0,1,2,3};
@@ -176,9 +171,7 @@ public class Maze
     // Method pergerakan posisi pemain
     public void Move(int side)
     {
-        if(player.getX()+1==width&&player.getY()+1==height&&side==DOWN)
-            settleGame();
-
+        if(player.getX()+1==width&&player.getY()+1==height&&side==DOWN) settleGame();
         if(CanPerform(side))
         {
             player.setY(player.getY()+neigh[side][0]);
