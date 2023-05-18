@@ -1,10 +1,10 @@
 public class Cell
 {
-    boolean[] wall;
+    boolean[] walls;
 
     public Cell()
     {
-        wall= new boolean [] {true,true,true,true};
+        walls= new boolean [] {true,true,true,true};
     }
 
     public static int NumOfSides()
@@ -14,11 +14,11 @@ public class Cell
 
     public void setWall(boolean value,int side)
     {
-        this.wall[side] = value;
+        this.walls[side] = value;
     }
 
     public boolean getWall(int side)
     {
-        return wall[side];
+        return walls[side];
     }
 }
