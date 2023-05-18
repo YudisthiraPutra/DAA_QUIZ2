@@ -4,7 +4,7 @@ import java.awt.event.ActionListener;
 
 public class ButtonAction implements ActionListener
 {
-    private Maze maze;
+    private Maze mazes;
     public static JPanel panel;
     ButtonPanel bPanel;
     public ButtonAction(Maze maze,MazePanel panel,ButtonPanel bPanel)
