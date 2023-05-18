@@ -8,7 +8,6 @@ public class ButtonPanel extends JPanel
     JLabel errorLbl;
     JButton clearTextBtn;
     JButton solveMazeBtn;
-    public JPanel panel;
     public ButtonPanel()
     {
         setLayout(new GridLayout(30,0));
