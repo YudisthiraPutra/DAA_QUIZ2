@@ -11,7 +11,7 @@ CATOME, short for Cat - Home, is a maze game that challenges players to navigate
 
 ---
 ## Interface
-Berikut adalah interface dari CATOME game yang telah kami buat:
+Here is the interface of the CATOME game that we have created:
 
 ![Foto1](./foto1.png)
 
